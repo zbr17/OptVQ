@@ -1,0 +1,9 @@
+# configurations
+/.vscode/
+
+# caches
+*optvq.egg-info/
+__pycache__/
+
+# log files
+/logs/
