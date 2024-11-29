@@ -1,9 +1,6 @@
 # Preventing Local Pitfalls in Vector Quantization via Optimal Transport 
 
-| Towards training VQ-VAE models robustly!
-
-<!-- [Paper](Coming soon)  -->
-<!-- | [Project Page](Coming soon) -->
+Paper | [Project Page](https://boruizhang.site/OptVQ/)
 <!-- | [Huggingface](Coming soon) -->
 
 ![head](assets/head.png)
