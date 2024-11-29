@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Preventing Local Pitfalls in Vector Quantization via Optimal Transport">
+  <meta name="keywords" content="OptVQ, VQ-VAE">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Preventing Local Pitfalls in Vector Quantization via Optimal Transport</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+
+<body>
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">Preventing Local Pitfalls in Vector Quantization via Optimal
+              Transport</h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://boruizhang.site">Borui Zhang</a><sup>1</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://wzzheng.net/">Wenzhao Zheng</a><sup>2</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://scholar.google.com/citations?user=6a79aPwAAAAJ&hl=en&authuser=1">Jie
+                  Zhou</a><sup>1</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://ivg.au.tsinghua.edu.cn/Jiwen_Lu/">Jiwen Lu</a><sup>1</sup>
+              </span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>Tsinghua University,</span>
+              <span class="author-block"><sup>2</sup>University of California, Berkeley</span>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- PDF Link. -->
+                <!-- <span class="link-block">
+                  <a href="https://arxiv.org/pdf/2011.12948" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                    </span>
+                    <span>Paper</span>
+                  </a>
+                </span> -->
+                <!-- Video Link. -->
+                <!-- <span class="link-block">
+                  <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                    </span>
+                    <span>Video</span>
+                  </a>
+                </span> -->
+                <!-- Code Link. -->
+                <span class="link-block">
+                  <a href="https://github.com/zbr17/OptVQ" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Abstract. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Vector-quantized networks (VQNs) have exhibited remarkable performance across various tasks, yet they are prone to training instability, which complicates the training process due to the necessity for techniques such as subtle initialization and model distillation. In this study, we identify the local minima issue as the primary cause of this instability. To address this, we integrate an optimal transport method in place of the nearest neighbor search to achieve a more globally informed assignment. We introduce
+              <b style="color: red">OptVQ</b>, a novel vector quantization method that employs the Sinkhorn algorithm to optimize the optimal transport problem, thereby enhancing the stability and efficiency of the training process. To mitigate the influence of diverse data distributions on the Sinkhorn algorithm, we implement a straightforward yet effective normalization strategy. Our comprehensive experiments on image reconstruction tasks demonstrate that OptVQ achieves <b>100%</b> codebook utilization and surpasses current state-of-the-art VQNs in reconstruction quality.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!--/ Abstract. -->
+    </div>
+  </section>
+
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body">
+        <img width="50%" src="./static/images/head.png" class="head-image"
+          alt="head figure" />
+        <h2 class="subtitle has-text-centered">
+          Comparison between different VQ methods. 
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Introduction</h2>
+          <div class="content has-text-justified">
+            <p>
+              The vector-quantized networks (VQNs), initially proposed for image distribution modeling, has since been expanded with enhanced architectures and training strategies. Specifically, the conventional vector quantization calculates the Euclidean distance between data features <b>Z</b> and the codebook <b>C</b>, with each feature selecting the closest codebook token as its discrete representation. Given the non-backpropagatable nature of the nearest neighbor operation, VQNs approximate the data feature gradient through copying the codebook's gradient during training (i.e.,  straight-through gradient estimation). Despite their significance, VQNs present training challenges, notably the <b>"index collapse"</b> phenomenon. Conventional VQNs, akin to parameterized online K-Means algorithms, are susceptible to local optima. The nearest neighbor operation is a greedy strategy, often leading to the selection of only a few peripheral codebooks, while the majority remain unused. To address this, researchers have proposed solutions such as subtle initialization, distillation strategies, and lower-dimensional codebooks. However, we posit that the training difficulties of VQNs are inherent to the local convergence issues of K-Means algorithms. A quantization strategy leveraging the global structure of data is essential to evade these local pitfalls.
+            </p>
+            <p>
+              We propose a novel vector quantization strategy, 
+              <b style="color: red">OptVQ</b>, which leverages global structure information between data and codebook for quantization. Inspired by optimal transport theory, we frame vector quantization as an optimal transport problem. The objective is to learn a mapping from data to the codebook that minimizes the overall transportation cost. To address this problem with efficiency, we utilize the Sinkhorn-Knopp algorithm to optimize the transport problem. Theoretical research confirms that the Sinkhorn algorithm can achieve near-optimal assignment results with significant efficiency. However, it is imperative to recognize that the Sinkhorn algorithm's performance is sensitive to the range of data values. Our research reveals that a straightforward yet effective normalization technique can mitigate this sensitivity. Our extensive experiments have demonstrated that OptVQ ensures 100% codebook utilization and surpasses current state-of-the-art vector quantization methods in image reconstruction tasks. OptVQ not only enhances the quality of reconstruction but also achieves training stability without the need for complex training techniques such as subtle initialization or distillation. 
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="content has-text-centered">
+        <img width="90%" src="./static/images/alg.png" class="alg-image"
+          alt="algorithm figure" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column">
+          <div class="content">
+            <h2 class="title is-3">Vanilla VQ</h2>
+            <p>
+              Vanilla VQ are significantly impacted by initialization, and features are trapped in the Voronoi cell Ω.
+            </p>
+            <video id="base-vq" autoplay controls muted loop playsinline width="80%">
+              <source src="./static/videos/base.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="column">
+          <h2 class="title is-3">OptVQ (ours)</h2>
+          <div class="columns is-centered">
+            <div class="column content">
+              <p>
+                The proposed OptVQ can escape local dilemmas and achieve global-aware indexing.
+              </p>
+              <video id="sink-vq" autoplay controls muted loop playsinline width="80%">
+                <source src="./static/videos/sink.mp4" type="video/mp4">
+              </video>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">Image Reconstruction</h2>
+
+          <h3 class="title is-4">Quantitative Comparison</h3>
+          <div class="content has-text-justified">
+            <p>
+              We evaluate the preformance using the PSNR, SSIM, LPIPS, and rFID metrics on the ImageNet validation set. Our implementation employs the widely adopted VQGAN architecture, with the codebook size set to 16384 and the feature dimension to 64. The quantitative  results demonstrate that our OptVQ ourperforms its counterparts across all metrics.  
+            </p>
+          </div>
+          <div class="content has-text-centered">
+            <img width="90%" src="./static/images/quantitative-res.png" class="content-image"
+              alt="quantitative comparison" />
+          </div>
+          <br />
+
+          <h3 class="title is-4">Qualitative Comparison</h3>
+          <div class="content has-text-justified">
+            <p>
+              The figure below elucidates the comparative visual fidelity, with the red-boxed regions underscoring the detail preservation of our method, particularly in facial features and texture compared with other SOTA methods.
+            </p>
+          </div>
+          <div class="content has-text-centered">
+            <img width="90%" src="./static/images/qualitative-res.png" class="content-image"
+              alt="qualitative comparison" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@article{park2021nerfies,
+  author    = {Park, Keunhong and Sinha, Utkarsh and Barron, Jonathan T. and Bouaziz, Sofien and Goldman, Dan B and Seitz, Steven M. and Martin-Brualla, Ricardo},
+  title     = {Nerfies: Deformable Neural Radiance Fields},
+  journal   = {ICCV},
+  year      = {2021},
+}</code></pre>
+    </div>
+  </section> -->
+
+
+  <footer class="footer">
+    <div class="container">
+      <!-- <div class="content has-text-centered">
+        <a class="icon-link" href="./static/videos/nerfies_paper.pdf">
+          <i class="fas fa-file-pdf"></i>
+        </a>
+        <a class="icon-link" href="https://github.com/keunhong" class="external-link" disabled>
+          <i class="fab fa-github"></i>
+        </a>
+      </div> -->
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This website is based on the <a href="https://github.com/nerfies/nerfies.github.io">template</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
