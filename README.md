@@ -1,7 +1,11 @@
 # Preventing Local Pitfalls in Vector Quantization via Optimal Transport 
 
-Paper | [Project Page](https://boruizhang.site/OptVQ/)
-<!-- | [Huggingface](Coming soon) -->
+<p style="color: gray; font-size: 18px; font-weight: bold; text-align: center;">
+  Paper | 
+  <a href="https://boruizhang.site/OptVQ/" style="text-decoration: none; color: white; background-color: #660874; padding: 4px 8px; border-radius: 8px; border-bottom: none;" target="_blank">Project Page</a>
+</p>
+
+
 
 ![head](assets/head.png)
 
