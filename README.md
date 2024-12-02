@@ -2,10 +2,9 @@
 
 <p style="color: gray; font-size: 18px; font-weight: bold; text-align: center;">
   Paper | 
-  <a href="https://boruizhang.site/OptVQ/" style="text-decoration: none; color: white; background-color: #660874; padding: 4px 8px; border-radius: 8px; border-bottom: none;" target="_blank">Project Page</a>
+  <a href="https://boruizhang.site/OptVQ/" style="text-decoration: none; color: white; background-color: #660874; padding: 4px 8px; border-radius: 8px; border-bottom: none;" target="_blank">Project Page</a> |
+  <a href="https://huggingface.co/spaces/BorelTHU/OptVQ" style="text-decoration: none; color: white; background-color: #660874; padding: 4px 8px; border-radius: 8px; border-bottom: none;" target="_blank">HF Demo</a>
 </p>
-
-
 
 ![head](assets/head.png)
 
@@ -57,12 +56,23 @@ pip install -e .
 
 Please download the pre-trained models from the following links:
 
-| Model | Link |
-| - | - |
-| OptVQ (16 x 16 x 4) | [Download](https://cloud.tsinghua.edu.cn/d/91befd96f06a4a83bb03/) |
-| OptVQ (16 x 16 x 8) | [Download](https://cloud.tsinghua.edu.cn/d/309a55529e1f4f42a8d2/) |
+| Model | Link (Tsinghua) | Link (Hugging Face) |
+| - | - | - |
+| OptVQ (16 x 16 x 4) | [Download](https://cloud.tsinghua.edu.cn/d/91befd96f06a4a83bb03/) | [Download](https://huggingface.co/BorelTHU/optvq-16x16x4) |
+| OptVQ (16 x 16 x 8) | [Download](https://cloud.tsinghua.edu.cn/d/309a55529e1f4f42a8d2/) | [Download](https://huggingface.co/BorelTHU/optvq-16x16x8) |
 
-Then you can write the following code to load the pre-trained model and perform inference:
+#### Option 1: Load from Hugging Face
+
+You can load from the Hugging Face model hub by running the following code:
+```python
+# Example: load the OptVQ with 16 x 16 x 4
+from optvq.models.vqgan_hf import VQModelHF
+model = VQModelHF.from_pretrained("BorelTHU/optvq-16x16x4")
+```
+
+#### Option 2: Load from the local checkpoint
+
+You can also write the following code to load the pre-trained model locally:
 ```python
 # Example: load the OptVQ with 16 x 16 x 4
 from optvq.utils.init import initiate_from_config_recursively
@@ -72,18 +82,26 @@ config = OmegaConf.load("configs/optvq.yaml")
 model = initiate_from_config_recursively(config.autoencoder)
 params = torch.load(..., map_location="cpu")
 model.load_state_dict(params["model"])
+```
 
+#### Perform inference
+
+After loading the model, you can perform inference (reconstruction):
+
+```python
 # load the dataset
 dataset = ... # the input should be normalized to [-1, 1]
 data = dataset[...] # size: (BS, C, H, W)
 
-# perform inference
+# reconstruct the input
 with torch.no_grad():
     quant, *_ = model.encode(data)
     recon = model.decode(quant)
 ```
 
-Or you can evaluate the pre-trained model on the ImageNet dataset by running the following command:
+### Evaluation
+
+To evaluate the model, you can use the following code:
 ```bash
 python eval.py --config $config_path --log_dir $log_dir --resume $resume --is_distributed
 ```

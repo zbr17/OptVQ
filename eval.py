@@ -18,7 +18,7 @@ from torch.utils.data.dataloader import DataLoader
 import torch.multiprocessing as mp
 
 from optvq.trainer.pipeline import (
-    setup_dataset, setup_config,
+    get_setup_optimizers, setup_dataset, setup_config,
     setup_dataloader, setup_model
 )
 from optvq.trainer.arguments import get_parser

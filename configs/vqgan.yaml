@@ -29,20 +29,15 @@ autoencoder:
         attn_resolutions: [16]
         dropout: 0.0
     quantize:
-      target: optvq.models.quantizer.VectorQuantizerSinkhorn
+      target: optvq.models.quantizer.VectorQuantizer
       params:
         n_e: 16384
         e_dim: 256
         beta: 0.25
-        use_proj: true
+        use_proj: false
         fix_codes: false
-        epsilon: 10
-        n_iters: 5
-        normalize_mode: all
-        use_prob: false
         start_quantize_steps: null
-        num_head: 4
-        loss_q_type: l2
+        num_head: 1
     loss:
       target: optvq.losses.aeloss_disc.AELossWithDisc
       params:
@@ -53,5 +48,5 @@ autoencoder:
         loss_g_weight: 1.0
         loss_d_weight: 1.0
         disc_in_channels: 3
-        disc_num_layers: 3
+        disc_num_layers: 2
         disc_start: 150000

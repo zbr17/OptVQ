@@ -4,6 +4,8 @@
 # caches
 *optvq.egg-info/
 __pycache__/
+.gradio/
+/checkpoints*/
 
 # log files
 /logs/
