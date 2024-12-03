@@ -38,9 +38,7 @@ The left figure with red points represents the baseline (Vanilla VQ), and the ri
   <img src="assets/sink.gif" width="300" />
 </p>
 
-## Usage
-
-### Installation
+## Installation
 
 Please install the dependencies by running the following command:
 ```bash
@@ -51,6 +49,18 @@ conda install -c pytorch -c nvidia faiss-gpu=1.8.0
 # install the optvq package
 pip install -e .
 ```
+
+## Usage: Quantizer
+
+If you want to use our quantizer in your project, you can follow the code below:
+```python
+# Given the input tensor x, the quantizer will output the quantized tensor x_quant, the loss, and the indices.
+from optvq.models.quantizer import VectorQuantizerSinkhorn
+quantizer = VectorQuantizerSinkhorn(n_e=1024, e_dim=256, num_head=1)
+x_quant, loss, indices = quantizer(x)
+```
+
+## Usage: VQ-VAE
 
 ### Inference
 
