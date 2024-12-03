@@ -6,6 +6,8 @@
   <a href="https://huggingface.co/spaces/BorelTHU/OptVQ" style="text-decoration: none; color: white; background-color: #660874; padding: 4px 8px; border-radius: 8px; border-bottom: none;" target="_blank">HF Demo</a>
 </p>
 
+***Struggling with 'index collapse' in vector quantization? Discover OptVQ, a solution designed to maximize codebook utilization and enhance reconstruction quality.***
+
 ![head](assets/head.png)
 
 ## News
