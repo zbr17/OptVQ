@@ -122,6 +122,11 @@ python eval.py --config $config_path --log_dir $log_dir --resume $resume --is_di
 
 We will release the training scripts soon.
 
+## Future work
+
+- **Image Generation:** Due to limited computation resources, the generation experiment on ImageNet with MaskGiT will cost around more than 1 month on 8 NVIDIA 4090 GPUs. If you are interested in this experiment, please contact us.
+- **High Compression Ratio:** We also plan to explore how to train a tokenizer with high compression ratio (e.g., f=32). If you have any ideas, please feel free to contact us. 
+
 <!-- ## Citation
 
 If you find this work useful, please consider citing it.
