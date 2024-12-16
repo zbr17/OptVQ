@@ -120,6 +120,11 @@ def setup_model(config: OmegaConf, device):
 
 ### factory functions
 
+def get_setup_optimizers(config):
+    name = config.train.pipeline
+    func_name = "setup_optimizers_" + name
+    return globals()[func_name]
+
 def get_pipeline(config):
     name = config.train.pipeline
     func_name = "pipeline_" + name
@@ -153,6 +158,81 @@ def _forward_backward(
     return loss, output
 
 ### autoencoder version
+def _find_weight_decay_id(modules: list, params_ids: list, 
+                          include_class: tuple = (nn.Linear, nn.Conv2d, 
+                                                  nn.ConvTranspose2d,
+                                                  nn.MultiheadAttention), 
+                          include_name: list = ["weight"]):
+    for mod in modules:
+        for sub_mod in mod.modules():
+            if isinstance(sub_mod, include_class):
+                for name, param in sub_mod.named_parameters():
+                    if any([k in name for k in include_name]):
+                        params_ids.append(id(param))
+    params_ids = list(set(params_ids))
+    return params_ids
+
+def set_weight_decay(modules: list):
+    weight_decay_ids = _find_weight_decay_id(modules, [])
+    wd_params, wd_names, no_wd_params, no_wd_names = [], [], [], []
+    for mod in modules:
+        for name, param in mod.named_parameters():
+            if id(param) in weight_decay_ids:
+                wd_params.append(param)
+                wd_names.append(name)
+            else:
+                no_wd_params.append(param)
+                no_wd_names.append(name)
+    return wd_params, wd_names, no_wd_params, no_wd_names
+
+def setup_optimizers_ae(config: OmegaConf, model: nn.Module, total_steps: int):
+    L.log.info("\n\n### Setting up the optimizers and schedulers. ###")
+    
+    # compute the total batch size and the learning rate
+    total_batch_size = config.data.batch_size * config.world_size * config.data.gradient_accumulate
+    total_learning_rate = config.train.learning_rate * total_batch_size
+    multipled_learning_rate = total_learning_rate * config.train.mul_learning_rate
+    L.log.info(f"Total batch size: {total_batch_size} = {config.data.batch_size} * {config.world_size} * {config.data.gradient_accumulate}")
+    L.log.info(f"Total learning rate: {total_learning_rate} = {config.train.learning_rate} * {total_batch_size}")
+    L.log.info(f"Multipled learning rate: {multipled_learning_rate} = {total_learning_rate} * {config.train.mul_learning_rate}")
+
+    # setup the optimizers
+    param_group = []
+    ## base learning rate
+    wd_params, wd_names, no_wd_params, no_wd_names = set_weight_decay([model.encoder, model.decoder, model.quant_conv, model.post_quant_conv])
+    param_group.append({
+        "params": wd_params, "lr": total_learning_rate, "eps": 1e-7,
+        "weight_decay": config.train.weight_decay, "beta": (0.9, 0.999),
+    })
+    param_group.append({
+        "params": no_wd_params, "lr": total_learning_rate, "eps": 1e-7,
+        "weight_decay": 0.0, "beta": (0.9, 0.999),
+    })
+    ## multipled learning rate
+    wd_params, wd_names, no_wd_params, no_wd_names = set_weight_decay([model.quantize])
+    param_group.append({
+        "params": wd_params, "lr": multipled_learning_rate, "eps": 1e-7,
+        "weight_decay": config.train.weight_decay, "beta": (0.9, 0.999),
+    })
+    param_group.append({
+        "params": no_wd_params, "lr": multipled_learning_rate, "eps": 1e-7,
+        "weight_decay": 0.0, "beta": (0.9, 0.999),
+    })
+
+    optimizer_ae = torch.optim.AdamW(param_group)
+    optimizer_dict = {"optimizer_ae": optimizer_ae}
+
+    # setup the schedulers
+    scheduler_ae = torch.optim.lr_scheduler.OneCycleLR(
+        optimizer=optimizer_ae, max_lr=[total_learning_rate, total_learning_rate, multipled_learning_rate, multipled_learning_rate],
+        total_steps=total_steps, pct_start=0.01, anneal_strategy="cos"
+    )
+    scheduler_dict = {"scheduler_ae": scheduler_ae}
+
+    # setup the scalers
+    scaler_dict = {"scaler_ae": torch.cuda.amp.GradScaler(enabled=config.use_amp)}
+    L.log.info(f"Enable AMP: {config.use_amp}")
+    return optimizer_dict, scheduler_dict, scaler_dict
 
 def pipeline_ae(
     config,
@@ -178,6 +258,71 @@ def pipeline_ae(
     return log_per_step, log_per_epoch
 
 ### autoencoder + disc version
+
+def setup_optimizers_ae_disc(config: OmegaConf, model: nn.Module, total_steps: int):
+    L.log.info("\n\n### Setting up the optimizers and schedulers. ###")
+    
+    # compute the total batch size and the learning rate
+    total_batch_size = config.data.batch_size * config.world_size * config.data.gradient_accumulate
+    total_learning_rate = config.train.learning_rate * total_batch_size
+    multipled_learning_rate = total_learning_rate * config.train.mul_learning_rate
+    L.log.info(f"Total batch size: {total_batch_size} = {config.data.batch_size} * {config.world_size} * {config.data.gradient_accumulate}")
+    L.log.info(f"Total learning rate: {total_learning_rate} = {config.train.learning_rate} * {total_batch_size}")
+    L.log.info(f"Multipled learning rate: {multipled_learning_rate} = {total_learning_rate} * {config.train.mul_learning_rate}")
+
+    # setup the optimizers
+    param_group = []
+    ## base learning rate
+    wd_params, wd_names, no_wd_params, no_wd_names = set_weight_decay([model.encoder, model.decoder, model.quant_conv, model.post_quant_conv])
+    param_group.append({
+        "params": wd_params, "lr": total_learning_rate, "eps": 1e-7,
+        "weight_decay": config.train.weight_decay, "beta": (0.9, 0.999),
+    })
+    param_group.append({
+        "params": no_wd_params, "lr": total_learning_rate, "eps": 1e-7,
+        "weight_decay": 0.0, "beta": (0.9, 0.999),
+    })
+    ## multipled learning rate
+    wd_params, wd_names, no_wd_params, no_wd_names = set_weight_decay([model.quantize])
+    param_group.append({
+        "params": wd_params, "lr": multipled_learning_rate, "eps": 1e-7,
+        "weight_decay": config.train.weight_decay, "beta": (0.9, 0.999),
+    })
+    param_group.append({
+        "params": no_wd_params, "lr": multipled_learning_rate, "eps": 1e-7,
+        "weight_decay": 0.0, "beta": (0.9, 0.999),
+    })
+    optimizer_ae = torch.optim.AdamW(param_group)
+
+    param_group = []
+    wd_params, wd_names, no_wd_params, no_wd_names = set_weight_decay([model.loss.discriminator])
+    param_group.append({
+        "params": wd_params, "lr": total_learning_rate, "eps": 1e-7,
+        "weight_decay": config.train.weight_decay, "beta": (0.9, 0.999),
+    })
+    param_group.append({
+        "params": no_wd_params, "lr": total_learning_rate, "eps": 1e-7,
+        "weight_decay": 0.0, "beta": (0.9, 0.999),
+    })
+    optimizer_disc = torch.optim.AdamW(param_group)
+    optimizer_dict = {"optimizer_ae": optimizer_ae, "optimizer_disc": optimizer_disc}
+
+    # setup the schedulers
+    scheduler_ae = torch.optim.lr_scheduler.OneCycleLR(
+        optimizer=optimizer_ae, max_lr=[total_learning_rate, total_learning_rate, multipled_learning_rate, multipled_learning_rate],
+        total_steps=total_steps, pct_start=0.01, anneal_strategy="cos"
+    )
+    scheduler_disc = torch.optim.lr_scheduler.OneCycleLR(
+        optimizer=optimizer_disc, max_lr=[total_learning_rate, total_learning_rate],
+        total_steps=total_steps, pct_start=0.01, anneal_strategy="cos"
+    )
+    scheduler_dict = {"scheduler_ae": scheduler_ae, "scheduler_disc": scheduler_disc}
+
+    # setup the scalers
+    scaler_dict = {"scaler_ae": torch.cuda.amp.GradScaler(enabled=config.use_amp), 
+                   "scaler_disc": torch.cuda.amp.GradScaler(enabled=config.use_amp)}
+    L.log.info(f"Enable AMP: {config.use_amp}")
+    return optimizer_dict, scheduler_dict, scaler_dict
 
 def pipeline_ae_disc(
     config, 

@@ -1,10 +1,9 @@
 # Preventing Local Pitfalls in Vector Quantization via Optimal Transport 
 
-<p style="color: gray; font-size: 18px; font-weight: bold; text-align: center;">
-  Paper | 
-  <a href="https://boruizhang.site/OptVQ/" style="text-decoration: none; color: white; background-color: #660874; padding: 4px 8px; border-radius: 8px; border-bottom: none;" target="_blank">Project Page</a> |
-  <a href="https://huggingface.co/spaces/BorelTHU/OptVQ" style="text-decoration: none; color: white; background-color: #660874; padding: 4px 8px; border-radius: 8px; border-bottom: none;" target="_blank">HF Demo</a>
-</p>
+Paper 
+| [Project Page](https://boruizhang.site/OptVQ/) 
+| [HF Demo](https://huggingface.co/spaces/BorelTHU/OptVQ)
+| [中文解读](https://zhuanlan.zhihu.com/p/12811862624)
 
 ***Struggling with 'index collapse' in vector quantization? Discover OptVQ, a solution designed to maximize codebook utilization and enhance reconstruction quality.***
 
@@ -12,7 +11,8 @@
 
 ## News
 
-| [2024-11-26] Release the pre-trained models of OptVQ.
+| [2024-12-16] We release the training code of OptVQ.  
+| [2024-11-26] We release the pre-trained models of OptVQ.
 
 ## Introduction
 
@@ -21,7 +21,7 @@ We conduct image reconstruction experiments on the ImageNet dataset, and the qua
 | Model | Latent Size | #Tokens | From Scratch | SSIM↑ | PSNR ↑ | LPIPS↓ | rFID↓ |
 | - | - | - | - | - | - | - | - |
 | taming-VQGAN | 16 × 16 | 1,024 | √ | 0.521 | 23.30 | 0.195 | 6.25 |
-| MaskGIT-VQGAN | 16 × 16 | 1,024 | √ | - | - | - | 2.28 |
+| MaskGiT-VQGAN | 16 × 16 | 1,024 | √ | - | - | - | 2.28 |
 | Mo-VQGAN | 16 × 16 × 4 | 1,024 | √ | 0.673 | 22.42 | 0.113 | 1.12 |
 | TiTok-S-128 | 128 | 4,096 | × | - | - | - | 1.71 |
 | ViT-VQGAN | 32 × 32 | 8,192 | √ | - | - | - | 1.28 |
@@ -115,12 +115,23 @@ with torch.no_grad():
 
 To evaluate the model, you can use the following code:
 ```bash
+config_path=configs/imagenet/optvq_256_f16_h4.yaml
+log_dir=<path-to-log-folder>
+resume=<path-to-checkpoint-folder>
+
 python eval.py --config $config_path --log_dir $log_dir --resume $resume --is_distributed
 ```
 
 ### Training
 
-We will release the training scripts soon.
+We train the OptVQ (16 × 16 × 4) model on the ImageNet dataset with 8 NVIDIA 4090 GPUs for 50 epochs (around 8 days).
+The training script is as follows:
+```bash
+config_path=configs/imagenet/optvq_256_f16_h4.yaml
+log_dir=<path-to-log-folder>
+
+python train.py --config $config_path --log_dir $log_dir --is_distributed --lr 2e-6
+```
 
 ## Future work
 

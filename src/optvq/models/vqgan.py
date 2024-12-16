@@ -81,8 +81,8 @@ class VQModel(nn.Module):
         dec = self.decoder(quant)
         return dec
 
-    def decode_code(self, code_b):
-        quant_b = self.quantize.embed_code(code_b)
+    def decode_code(self, code_b, size=None):
+        quant_b = self.quantize.embed_code(code_b, size=size)
         dec = self.decode(quant_b)
         return dec
 
@@ -90,10 +90,10 @@ class VQModel(nn.Module):
         """
         Args:
             x (torch.Tensor): input tensor
-            mode (int): 0 for autoencoder, 1 for discriminator
+            mode (int): 0 for autoencoder, 1 for discriminator, 2 for hidden embedding, 3 for reconstruction
             global_step (int): global step for adaptive discriminator weight
         """
-        global_step = global_step if global_step is not None else L.log.total_steps
+        global_step = global_step if global_step is not None else getattr(L.log, "total_steps", 0)
         quant, qloss, indices = self.encode(x)
         xrec = self.decode(quant)
         if mode == 0:
@@ -107,6 +107,8 @@ class VQModel(nn.Module):
             h = self.encoder(x)
             h = self.quant_conv(h)
             return h
+        elif mode == 3:
+            return xrec
         return loss, log_dict, indices
 
     def get_input(self, batch, k):
@@ -117,12 +119,8 @@ class VQModel(nn.Module):
         return x.float()
 
     def get_last_layer(self):
-        if hasattr(self.decoder, "conv_out"):
-            return self.decoder.conv_out.weight
-        elif hasattr(self.decoder, "out_fc"):
-            return self.decoder.out_fc.weight
-        elif hasattr(self.decoder, "inv_conv"):
-            return self.decoder.inv_conv.weight
+        if hasattr(self.decoder, "get_last_layer"):
+            return self.decoder.get_last_layer
         else:
             raise NotImplementedError(f"Cannot find last layer in decoder")
 

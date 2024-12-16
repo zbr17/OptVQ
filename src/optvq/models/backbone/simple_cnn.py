@@ -88,3 +88,7 @@ class PlainCNNDecoder(nn.Module):
         x = self.act3(x)
         x = self.out_fc(x)
         return x
+    
+    @property
+    def get_last_layer(self):
+        return self.out_fc.weight

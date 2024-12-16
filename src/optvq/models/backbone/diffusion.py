@@ -514,6 +514,10 @@ class Decoder(nn.Module):
     @property
     def hidden_dim(self):
         return self.conv_in.in_channels
+    
+    @property
+    def get_last_layer(self):
+        return self.conv_out.weight
 
     def forward(self, z):
         #assert z.shape[1:] == self.z_shape[1:]

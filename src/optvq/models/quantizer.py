@@ -111,6 +111,32 @@ class VectorQuantizer(nn.Module):
             L.log.add_scalar("params/quantize_ratio", 1.0)
             return x + (x_q - x).detach()  
 
+    def embed_code(self, code, size=None, code_format="image"):
+        """
+        Args:
+            code_format (str): "image" (B x nH x H x W) or "sequence" (B x T x nH)
+        """
+        code = code.view(code.shape[0], -1)
+        B, dim = code.size()
+        if size is not None:
+            H, W = size[0], size[1]
+        else:
+            H_W = int(dim / self.num_head)
+            H = W = int(math.sqrt(H_W))
+        assert H * W * self.num_head == dim
+
+        embed = self.proj(self.embedding.weight) if self.use_proj else self.embedding.weight
+        embed = self.norm(embed)
+        x_q = embed[code] # (B, TxnH, dC)
+
+        if code_format == "image":
+            x_q = x_q.view(B, self.num_head, H_W, -1)
+            x_q = x_q.permute(0, 2, 1, 3).contiguous().view(B, H_W, -1)
+        elif code_format == "sequence":
+            x_q = x_q.view(B, H_W, -1)
+        x_q = self.recover_output(x_q, {"size": (H, W)})
+        return x_q
+
     @torch.autocast(device_type="cuda", enabled=False)
     def forward(self, x: Tensor):
         """
