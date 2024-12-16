@@ -23,6 +23,15 @@
   <script src="./static/js/bulma-slider.min.js"></script>
   <script src="./static/js/index.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  <!-- MathJax -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+  <script type="text/javascript"
+    src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+
 </head>
 
 <body>
@@ -87,8 +96,16 @@
                 </span>
                 <!-- HF Link. -->
                 <span class="link-block">
-                  <a href="https://huggingface.co/spaces/BorelTHU/OptVQ" class="external-link button is-normal is-rounded is-dark">
+                  <a href="https://huggingface.co/spaces/BorelTHU/OptVQ"
+                    class="external-link button is-normal is-rounded is-dark">
                     <span>HF Demo</span>
+                  </a>
+                </span>
+                <!-- Chinese Link. -->
+                <span class="link-block">
+                  <a href="https://zhuanlan.zhihu.com/p/12811862624"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span>中文解读</span>
                   </a>
                 </span>
               </div>
@@ -100,97 +117,204 @@
     </div>
   </section>
 
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+
+      <!-- Head Figure -->
+      <div class="hero-body">
+        <img width="50%" src="./static/images/head.png" class="head-image" alt="head figure" />
+        <h2 class="subtitle has-text-centered">
+          Comparison between different VQ methods.
+        </h2>
+      </div>
+      <!--/ Head Figure -->
+
+    </div>
+  </section>
+
   <section class="section">
     <div class="container is-max-desktop">
+
       <!-- Abstract. -->
       <div class="columns is-centered has-text-centered">
         <div class="column is-four-fifths">
           <h2 class="title is-3">Abstract</h2>
           <div class="content has-text-justified">
             <p>
-              Vector-quantized networks (VQNs) have exhibited remarkable performance across various tasks, yet they are prone to training instability, which complicates the training process due to the necessity for techniques such as subtle initialization and model distillation. In this study, we identify the local minima issue as the primary cause of this instability. To address this, we integrate an optimal transport method in place of the nearest neighbor search to achieve a more globally informed assignment. We introduce
-              <b style="color: red">OptVQ</b>, a novel vector quantization method that employs the Sinkhorn algorithm to optimize the optimal transport problem, thereby enhancing the stability and efficiency of the training process. To mitigate the influence of diverse data distributions on the Sinkhorn algorithm, we implement a straightforward yet effective normalization strategy. Our comprehensive experiments on image reconstruction tasks demonstrate that OptVQ achieves <b>100%</b> codebook utilization and surpasses current state-of-the-art VQNs in reconstruction quality.
+              Vector-quantized networks (VQNs) have exhibited remarkable performance across various tasks, yet they are
+              prone to training instability, which complicates the training process due to the necessity for techniques
+              such as subtle initialization and model distillation. In this study, we identify the local minima issue as
+              the primary cause of this instability. To address this, we integrate an optimal transport method in place
+              of the nearest neighbor search to achieve a more globally informed assignment. We introduce
+              <b style="color: red">OptVQ</b>, a novel vector quantization method that employs the Sinkhorn algorithm to
+              optimize the optimal transport problem, thereby enhancing the stability and efficiency of the training
+              process. To mitigate the influence of diverse data distributions on the Sinkhorn algorithm, we implement a
+              straightforward yet effective normalization strategy. Our comprehensive experiments on image
+              reconstruction tasks demonstrate that OptVQ achieves <b>100%</b> codebook utilization and surpasses
+              current state-of-the-art VQNs in reconstruction quality.
             </p>
           </div>
         </div>
       </div>
       <!--/ Abstract. -->
-    </div>
-  </section>
 
-  <section class="hero teaser">
-    <div class="container is-max-desktop">
-      <div class="hero-body">
-        <img width="50%" src="./static/images/head.png" class="head-image"
-          alt="head figure" />
-        <h2 class="subtitle has-text-centered">
-          Comparison between different VQ methods. 
-        </h2>
-      </div>
     </div>
   </section>
 
   <section class="section">
     <div class="container is-max-desktop">
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          <h2 class="title is-3">Introduction</h2>
-          <div class="content has-text-justified">
-            <p>
-              The vector-quantized networks (VQNs), initially proposed for image distribution modeling, has since been expanded with enhanced architectures and training strategies. Specifically, the conventional vector quantization calculates the Euclidean distance between data features <b>Z</b> and the codebook <b>C</b>, with each feature selecting the closest codebook token as its discrete representation. Given the non-backpropagatable nature of the nearest neighbor operation, VQNs approximate the data feature gradient through copying the codebook's gradient during training (i.e.,  straight-through gradient estimation). Despite their significance, VQNs present training challenges, notably the <b>"index collapse"</b> phenomenon. Conventional VQNs, akin to parameterized online K-Means algorithms, are susceptible to local optima. The nearest neighbor operation is a greedy strategy, often leading to the selection of only a few peripheral codebooks, while the majority remain unused. To address this, researchers have proposed solutions such as subtle initialization, distillation strategies, and lower-dimensional codebooks. However, we posit that the training difficulties of VQNs are inherent to the local convergence issues of K-Means algorithms. A quantization strategy leveraging the global structure of data is essential to evade these local pitfalls.
-            </p>
-            <p>
-              We propose a novel vector quantization strategy, 
-              <b style="color: red">OptVQ</b>, which leverages global structure information between data and codebook for quantization. Inspired by optimal transport theory, we frame vector quantization as an optimal transport problem. The objective is to learn a mapping from data to the codebook that minimizes the overall transportation cost. To address this problem with efficiency, we utilize the Sinkhorn-Knopp algorithm to optimize the transport problem. Theoretical research confirms that the Sinkhorn algorithm can achieve near-optimal assignment results with significant efficiency. However, it is imperative to recognize that the Sinkhorn algorithm's performance is sensitive to the range of data values. Our research reveals that a straightforward yet effective normalization technique can mitigate this sensitivity. Our extensive experiments have demonstrated that OptVQ ensures 100% codebook utilization and surpasses current state-of-the-art vector quantization methods in image reconstruction tasks. OptVQ not only enhances the quality of reconstruction but also achieves training stability without the need for complex training techniques such as subtle initialization or distillation. 
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="content has-text-centered">
-        <img width="90%" src="./static/images/alg.png" class="alg-image"
-          alt="algorithm figure" />
-      </div>
-    </div>
-  </section>
 
-  <section class="section">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column">
-          <div class="content">
-            <h2 class="title is-3">Vanilla VQ</h2>
-            <p>
-              Vanilla VQ are significantly impacted by initialization, and features are trapped in the Voronoi cell Ω.
-            </p>
-            <video id="base-vq" autoplay controls muted loop playsinline width="80%">
-              <source src="./static/videos/base.mp4" type="video/mp4">
-            </video>
-          </div>
-        </div>
-        <div class="column">
-          <h2 class="title is-3">OptVQ (ours)</h2>
-          <div class="columns is-centered">
-            <div class="column content">
-              <p>
-                The proposed OptVQ can escape local dilemmas and achieve global-aware indexing.
-              </p>
-              <video id="sink-vq" autoplay controls muted loop playsinline width="80%">
-                <source src="./static/videos/sink.mp4" type="video/mp4">
-              </video>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
+      <!-- Introduction. -->
       <div class="columns is-centered">
         <div class="column is-full-width">
-          <h2 class="title is-3">Image Reconstruction</h2>
+          <h2 class="title is-3">1. Introduction</h2>
+          <!-- <h3 class="title is-4">Interpolating states</h3> -->
+          <div class="content has-text-justified">
+            <p>
+              The vector-quantized networks (VQNs), initially proposed for image distribution modeling, has since been
+              expanded with enhanced architectures and training strategies. Specifically, the conventional vector
+              quantization calculates the Euclidean distance between data features $\mathbf{Z}$ and the codebook
+              $\mathcal{C}$, with each feature selecting the closest codebook token as its discrete representation.
+              Given the non-backpropagatable nature of the nearest neighbor operation, VQNs approximate the data feature
+              gradient through copying the codebook's gradient during training (i.e., straight-through gradient
+              estimation). Despite their significance, VQNs present training challenges, notably the <b>"index
+                collapse"</b> phenomenon. Conventional VQNs, akin to parameterized online K-Means algorithms, are
+              susceptible to local optima. The nearest neighbor operation is a greedy strategy, often leading to the
+              selection of only a few peripheral codebooks, while the majority remain unused. To address this,
+              researchers have proposed solutions such as subtle initialization, distillation strategies, and
+              lower-dimensional codebooks. However, we posit that the training difficulties of VQNs are inherent to the
+              local convergence issues of K-Means algorithms. A quantization strategy leveraging the global structure of
+              data is essential to evade these local pitfalls.
+            </p>
+            <p>
+              We propose a novel vector quantization strategy,
+              <b style="color: red">OptVQ</b>, which leverages global structure information between data and codebook
+              for quantization. Inspired by optimal transport theory, we frame vector quantization as an optimal
+              transport problem. The objective is to learn a mapping from data to the codebook that minimizes the
+              overall transportation cost. To address this problem with efficiency, we utilize the Sinkhorn-Knopp
+              algorithm to optimize the transport problem. Theoretical research confirms that the Sinkhorn algorithm can
+              achieve near-optimal assignment results with significant efficiency. However, it is imperative to
+              recognize that the Sinkhorn algorithm's performance is sensitive to the range of data values. Our research
+              reveals that a straightforward yet effective normalization technique can mitigate this sensitivity. Our
+              extensive experiments have demonstrated that OptVQ ensures 100% codebook utilization and surpasses current
+              state-of-the-art vector quantization methods in image reconstruction tasks. OptVQ not only enhances the
+              quality of reconstruction but also achieves training stability without the need for complex training
+              techniques such as subtle initialization or distillation.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!--/ Introduction. -->
 
+      <!-- Method. -->
+      <div class="columns is-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">2. Method</h2>
+          <div class="content has-text-centered">
+            <img width="75%" src="./static/images/intro-1.png" class="content-image" alt="introduction-figure1" />
+            <p class="subtitle has-text-centered">
+              Optimization process of different quantization methods.
+            </p>
+          </div>
+          <div class="content has-text-justified">
+            <p>
+              We propose a novel vector quantizer by employing a global search method instead of the nearest neighbor
+              search. Optimal transport theory is dedicated to solving the optimal mapping
+              problem between two distributions. The core concept is that by minimizing a certain cost, we can map one
+              distribution onto another, effectively addressing our local pitfall issue in VQ. Specifically, for the
+              codebook $\mathbf{C} = [\mathbf{c}_1, \cdots, \mathbf{c}_n] \in \mathbb{R}^{d\times n}$ and the features
+              to be assigned $\mathbf{Z} = [\mathbf{z}_1,\cdots,\mathbf{z}_l] \in \mathbb{R}^{d\times l}$, we seek an
+              assignment matrix $\mathbf{A} \in \mathbb{R}_+^{l \times n}$ that not only respects the order of distances
+              between codes and features, but also ensures maximal participation of each code and feature. This can be
+              formulated as the following optimization problem:
+              $\min_{\mathbf{A}} \text{Tr}(\mathbf{A}^T \mathbf{D}) - \frac{1}{\epsilon} H(\mathbf{A}) \tag{1} \\ s.t.,
+              ~ \mathbf{A} \mathbf{1}_r = \mathbf{1}_r, \mathbf{A}^T \mathbf{1}_c = \mathbf{1}_c, \mathbf{A} \in
+              \mathbb{R}_+^{l \times n},$
+              where $\mathbf{D} \in \mathbb{R}_+^{l\times n} (\mathbf{D}_ij = \Vert \mathbf{z}_i - \mathbf{c}_j \Vert)$
+              is the distance matrix between codes and features, $H(\mathbf{A}) = - \sum_{ij} \mathbf{A}_{ij} \log
+              \mathbf{A}_{ij}$ is the entropy function, $\epsilon$ is a hyperparameter, and $\mathbf{1}_r$ and
+              $\mathbf{1}_c$ are vectors of ones for the rows and columns, respectively. The objective function
+              $\text{Tr}(\mathbf{A}^T \mathbf{D})$ ensures that the assignment matrix $\mathbf{A}$ adheres to the order
+              of distances between codes and features, while the entropy term $H(\mathbf{A})$ and the constraints ensure
+              that all codes and features are considered in the assignment process. By selecting an appropriate value
+              for $\epsilon$, a good balance can be achieved between maintaining the order of distances and ensuring a
+              globally informed assignment. The larger the value of $\mathbf{A}_{ij}$, the greater the tendency for
+              feature $\mathbf{z}_i$ to be assigned to code $\mathbf{c}_j$. Thus, the OptVQ algorithm we propose is as
+              follows:
+              $\mathbf{z}_q = h(\mathbf{z}_i) = \mathbf{c}_k, \quad \text{where} \quad k = \arg \max_{j}
+              \mathbf{A}_{ij}. \tag{2}$
+              When the data distribution is significantly inconsistent with the codebook distribution, the entropy
+              function and constraint term in OptVQ play a crucial role in ensuring that each code and feature
+              participate fully in the assignment, thereby avoiding the local pitfall issue. As training progresses and
+              the distributions of data and codebook gradually overlap (i.e., there exists a code $\mathbf{c}_j$ such
+              that the distance to feature $\mathbf{z}_i$ is close to $0$), the solution to Equ.(1) will tend towards a
+              one-hot format, where $\mathbf{A}_{ij} > 0$ and $\mathbf{A}_{ik} = 0$ for all $k\neq j$, in which OptVQ
+              aligns with the conventional VQ method. Subsequent experiments verify that our proposed OptVQ effectively
+              solves the local pitfalls of conventional VQ and basically achieves 100% codebook utilization. For
+              efficient optimization of the optimal transport problem, we employ the Sinkhorn-Knopp algorithm. for more
+              detailed information, please refer to the original paper and the
+              algorithm is as follows:
+            </p>
+          </div>
+          <div class="content has-text-centered">
+            <img width="90%" src="./static/images/alg.png" class="alg-image" alt="algorithm figure" />
+          </div>
+        </div>
+      </div>
+      <!--/ Method. -->
+
+      <!-- Experiment. -->
+      <div class="columns is-centered">
+        <div class="column is-full-width">
+
+          <h2 class="title is-3">3. Experiment</h2>
+
+          <h3 class="title is-4">3.1. Property Verification</h3>
+          <div class="content has-text-justified">
+            <p>
+              To elucidate the ability of OptVQ to resolve local pitfalls in VQNs, we depict the dynamic training
+              trajectory in a two-dimensional context. We initiate $100$ data points and $25$ codes at random, where the
+              vanilla VQ with the nearest neighbor method is denoted by red and OptVQ with the optimal transport method
+              is denoted by green. It is evident that vanilla VQ is markedly influenced by the initial distribution,
+              engaging predominantly with codes located at the distribition's extremities. In contrast, OptVQ
+              effectively harnesses the global structure, resulting in an equitable matching between data points and
+              codes.
+            </p>
+          </div>
+          <div class="columns is-centered">
+            <div class="column">
+              <div class="content">
+                <h3 class="title is-4">Vanilla VQ</h3>
+                <p>
+                  Vanilla VQ are significantly impacted by initialization, and features are trapped in the Voronoi cell
+                  $\Omega_i$.
+                </p>
+                <video id="base-vq" autoplay controls muted loop playsinline width="80%">
+                  <source src="./static/videos/base.mp4" type="video/mp4">
+                </video>
+              </div>
+            </div>
+            <div class="column">
+              <div class="content">
+                <h3 class="title is-4">OptVQ (ours)</h3>
+                <p>
+                  The proposed OptVQ can escape local dilemmas and achieve global-aware indexing.
+                </p>
+                <video id="sink-vq" autoplay controls muted loop playsinline width="80%">
+                  <source src="./static/videos/sink.mp4" type="video/mp4">
+                </video>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="title is-4">3.2. Image Reconstruction</h3>
           <h3 class="title is-4">Quantitative Comparison</h3>
           <div class="content has-text-justified">
             <p>
-              We evaluate the preformance using the PSNR, SSIM, LPIPS, and rFID metrics on the ImageNet validation set. Our implementation employs the widely adopted VQGAN architecture, with the codebook size set to 16384 and the feature dimension to 64. The quantitative  results demonstrate that our OptVQ ourperforms its counterparts across all metrics.  
+              We evaluate the preformance using the PSNR, SSIM, LPIPS, and rFID metrics on the ImageNet validation set.
+              Our implementation employs the widely adopted VQGAN architecture, with the codebook size set to 16384 and
+              the feature dimension to 64. The quantitative results demonstrate that our OptVQ ourperforms its
+              counterparts across all metrics.
             </p>
           </div>
           <div class="content has-text-centered">
@@ -198,19 +322,53 @@
               alt="quantitative comparison" />
           </div>
           <br />
-
           <h3 class="title is-4">Qualitative Comparison</h3>
           <div class="content has-text-justified">
             <p>
-              The figure below elucidates the comparative visual fidelity, with the red-boxed regions underscoring the detail preservation of our method, particularly in facial features and texture compared with other SOTA methods.
+              The figure below elucidates the comparative visual fidelity, with the red-boxed regions underscoring the
+              detail preservation of our method, particularly in facial features and texture compared with other SOTA
+              methods.
             </p>
           </div>
           <div class="content has-text-centered">
             <img width="90%" src="./static/images/qualitative-res.png" class="content-image"
               alt="qualitative comparison" />
           </div>
+
+          <h3 class="title is-4">3.3. Ablation Study</h3>
+          <h3 class="title is-4">Optimal Transport v.s. Nearest Neighbor</h3>
+          <div class="content has-text-justified">
+            <p>
+              We compare the optimal transport operation with the nearest neighbor across varying conditions, including
+              different latent dimensions and codebook sizes. These experiments are conducted on a 1% subset of ImageNet
+              for efficiency. The conventional VQ-VAE experiences a substantial decrease in codebook utilization as the
+              codebook size increases, plummeting below 1%. In contrast, OptVQ consistently maintains a 100% codebook
+              utilization, leading to a marked improvement in reconstruction performance with an expanding codebook
+              size.
+            </p>
+          </div>
+          <div class="content has-text-centered">
+            <img width="90%" src="./static/images/ablation-1.png" class="content-image" alt="ablation-1" />
+          </div>
+          <h3 class="title is-4">Iterations for Sinkhorn Algorithm</h3>
+          <div class="content has-text-justified">
+            <p>
+              We probe the convergence of the Sinkhorn algorithm, adhering to the same settings with $\epsilon=10$. We
+              randomly simulated $10$ data points and $10$ codes with a dimension of $16$, and then execute the Sinkhorn
+              algorithm to scrutinize the $\mathbf{A}^t$ matrix post each iteration. Our observations reveal that the
+              values in $\mathbf{A}^t$ progressively converge as the number of iterations increases. Notably, the
+              Sinkhorn algorithm has achieved convergence by the fifth iteration. Thus, a relatively small number of
+              iterations suffices to yield a reasonably accurate solution for the optimal transport problem.
+            </p>
+          </div>
+          <div class="content has-text-centered">
+            <img width="75%" src="./static/images/ablation-3.png" class="content-image" alt="ablation-3" />
+          </div>
+
         </div>
       </div>
+      <!--/ Experiment. -->
+
     </div>
   </section>
 
