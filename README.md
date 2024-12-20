@@ -1,6 +1,6 @@
 # Preventing Local Pitfalls in Vector Quantization via Optimal Transport 
 
-Paper 
+[Paper](https://arxiv.org/abs/2412.15195) 
 | [Project Page](https://boruizhang.site/OptVQ/) 
 | [HF Demo](https://huggingface.co/spaces/BorelTHU/OptVQ)
 | [中文解读](https://zhuanlan.zhihu.com/p/12811862624)
