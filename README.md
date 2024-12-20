@@ -138,10 +138,16 @@ python train.py --config $config_path --log_dir $log_dir --is_distributed --lr 2
 - **Image Generation:** Due to limited computation resources, the generation experiment on ImageNet with MaskGiT will cost around more than 1 month on 8 NVIDIA 4090 GPUs. If you are interested in this experiment, please contact us.
 - **High Compression Ratio:** We also plan to explore how to train a tokenizer with high compression ratio (e.g., f=32). If you have any ideas, please feel free to contact us. 
 
-<!-- ## Citation
+## Citation
 
 If you find this work useful, please consider citing it.
 
 ```bibtex
-xxx
-``` -->
+@article{zhang2024preventing,
+    title   = {Preventing Local Pitfalls in Vector Quantization via Optimal Transport},
+    author  = {Borui Zhang and Wenzhao Zheng and Jie Zhou and Jiwen Lu},
+    journal = {ArXiv},
+    year    = {2024},
+    volume  = {abs/2412.15195}
+}
+```
