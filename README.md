@@ -1,9 +1,10 @@
 # Preventing Local Pitfalls in Vector Quantization via Optimal Transport 
 
-[Paper](https://arxiv.org/abs/2412.15195) 
-| [Project Page](https://boruizhang.site/OptVQ/) 
-| [HF Demo](https://huggingface.co/spaces/BorelTHU/OptVQ)
-| [中文解读](https://zhuanlan.zhihu.com/p/12811862624)
+[![paper](https://img.shields.io/badge/arXiv-Paper-green)](https://arxiv.org/abs/2412.15195)
+[![Website](https://img.shields.io/badge/Project-Website-blue)](https://boruizhang.site/OptVQ/)
+[![Demo](https://img.shields.io/badge/HF-Demo-red)](https://huggingface.co/spaces/BorelTHU/OptVQ)
+[![Demo](https://img.shields.io/badge/知乎-中文解读-yellow)](https://zhuanlan.zhihu.com/p/12811862624)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/preventing-local-pitfalls-in-vector/image-reconstruction-on-imagenet)](https://paperswithcode.com/sota/image-reconstruction-on-imagenet?p=preventing-local-pitfalls-in-vector)
 
 ***Struggling with 'index collapse' in vector quantization? Discover OptVQ, a solution designed to maximize codebook utilization and enhance reconstruction quality.***
 
